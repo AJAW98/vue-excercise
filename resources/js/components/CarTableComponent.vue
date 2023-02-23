@@ -1,12 +1,20 @@
 <template>
-    <div>
-        <bootstrap-4-datatable :columns="columns" :data="rows" :filter="filter" :per-page="perPage" class="table-bordered"></bootstrap-4-datatable>
-        <bootstrap-4-datatable-pager v-model="page" type="abbreviated"></bootstrap-4-datatable-pager>
+    <div> 
+        <div v-if="tableView">
+            <bootstrap-4-datatable :columns="columns" :data="rows" :filter="filter" :per-page="perPage" class="table-bordered">
+                <template >
+                    <table-buttons-component :car="row" @rowView="toggleView"></table-buttons-component>
+                </template>
+            </bootstrap-4-datatable>
+            <bootstrap-4-datatable-pager v-model="page" type="abbreviated"></bootstrap-4-datatable-pager>
+        </div>
+        <car v-if="!tableView" :car="rows[0]"></car>
     </div>
 </template>
 
 <script>
 import TableButtonsComponent from "./TableButtonsComponent";
+import Car from './Car.vue';
 
 export default {
     data() {
@@ -71,7 +79,9 @@ export default {
             page: 1,
             filter:  '',
             perPage: 20,
-            loading: true
+            loading: true,
+            tableView: true,
+            edit: false
         }
     },
     methods: {
@@ -79,6 +89,10 @@ export default {
             axios.get('/car').then(function (res) {
                 this.rows = res.data.map(o => ({...o, 'type': 'car'}));
             }.bind(this));
+        },
+        toggleView: function(row) {
+            //this.tableView = !this.tableView;
+            console.log('test')
         }
     },
     created: function () {

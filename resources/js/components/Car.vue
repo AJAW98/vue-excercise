@@ -1,19 +1,24 @@
 <template>
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">Car</div>
+    <div>
 
-                    <div class="card-body">
-                        <car-table-component></car-table-component>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <h2>{{ car.make }}</h2>
+        <input/>
+        <input/>
+        <input/>
     </div>
 </template>
 
 <script>
-export default {}
+export default {
+
+    props: {
+        car: {
+            type: Object
+        }
+    },
+    methods: {
+
+
+    }
+}
 </script>
