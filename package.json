@@ -24,7 +24,6 @@
         "vue-template-compiler": "^2.6.10"
     },
     "dependencies": {
-        "composer": "^4.1.0",
         "vue-axios": "^3.3.6",
         "vue-router": "^3.5.2",
         "vuejs-datatable": "^2.0.0-alpha.7"

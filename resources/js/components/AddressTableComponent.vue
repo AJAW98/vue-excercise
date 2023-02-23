@@ -17,6 +17,23 @@ export default {
                     field: 'id',
                     align: 'center'
                 },
+
+                //Adds name column with owner's concatenated name
+                {
+                    label: 'Name',
+                    field: 'owner',
+                    align: 'center',
+                    interpolate: true,
+                    representedAs: function (r) {
+                        return r.owner.first_name + '<br>' + r.owner.last_name;
+                    }
+                    
+                },
+                {
+                    label: 'Cars',
+                    field: 'cars_count',
+                    align: 'center'
+                },
                 {
                     label: 'Address',
                     field: 'address',

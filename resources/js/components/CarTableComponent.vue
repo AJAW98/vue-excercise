@@ -35,6 +35,31 @@ export default {
                     headerAlign: 'left',
                     align: 'left'
                 },
+
+                //Adds name column with owner's concatenated name
+                {
+                    label: 'Owner',
+                    field: 'owner',
+                    headerAlign: 'left',
+                    align: 'left',
+                    interpolate: true,
+                    representedAs: function (r) {
+                        return r.owner.first_name + '<br>' + r.owner.last_name;
+                    }
+                },
+
+                //Adds address column from the address object in the response
+
+                {
+                    label: 'Address',
+                    field: 'address',
+                    headerAlign: 'left',
+                    align: 'left',
+                    interpolate: true,
+                    representedAs: function (r) {
+                        return r.address.address + '<br>' + r.address.city + '<br>' + r.address.country + '<br>' + r.address.postal_code;
+                    }
+                },
                 {
                     label: 'Actions',
                     headerAlign: 'right',

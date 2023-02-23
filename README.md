@@ -26,9 +26,15 @@
 
 The objectives outlined below should be completed and any resulting code should follow the code style of the project and have doc-blocks where applicable.
 
+
+--------- DONE ----------
 - Modify Vue Datatables Owners table structure to include columns for number of addresses and cars associated with each owner.
 - Modify Vue Datatables Addresses table structure to include concatenated owner name and number of cars associated with each address.
 - Modify Vue Datatables Cars table to include concatenated owner name and address associated with each car.
+
+-------------------------
+
+
 - Build simple and reusable view/edit Vue.js components for owners, addresses, and cars and link them to the action buttons in each table. The displayed data should include associated entities. (Addresses and cars for the owner. Owner and cars for the address. Owner and address for the cars.)
 - Build a simple and reusable delete Vue.js component for owners, addresses, and cars. This should include a confirmation prompt.
 

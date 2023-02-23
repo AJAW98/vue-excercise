@@ -1931,6 +1931,18 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         field: 'id',
         align: 'center'
       }, {
+        label: 'Name',
+        field: 'owner',
+        align: 'center',
+        interpolate: true,
+        representedAs: function representedAs(r) {
+          return r.owner.first_name + '<br>' + r.owner.last_name;
+        }
+      }, {
+        label: 'Cars',
+        field: 'cars_count',
+        align: 'center'
+      }, {
         label: 'Address',
         field: 'address',
         headerAlign: 'left',
@@ -2098,6 +2110,24 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         headerAlign: 'left',
         align: 'left'
       }, {
+        label: 'Owner',
+        field: 'owner',
+        headerAlign: 'left',
+        align: 'left',
+        interpolate: true,
+        representedAs: function representedAs(r) {
+          return r.owner.first_name + '<br>' + r.owner.last_name;
+        }
+      }, {
+        label: 'Addresses',
+        field: 'address',
+        headerAlign: 'left',
+        align: 'left',
+        interpolate: true,
+        representedAs: function representedAs(r) {
+          return r.address.address + '<br>' + r.address.city + '<br>' + r.address.country + '<br>' + r.address.postal_code;
+        }
+      }, {
         label: 'Actions',
         headerAlign: 'right',
         align: 'right',
@@ -2113,6 +2143,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   methods: {
     showCars: function showCars() {
       axios.get('/car').then(function (res) {
+        console.log(res);
         this.rows = res.data.map(function (o) {
           return _objectSpread(_objectSpread({}, o), {}, {
             'type': 'car'
@@ -2189,13 +2220,23 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         field: 'id',
         align: 'center'
       }, {
-        label: 'First Name',
+        label: 'First aName',
         field: 'first_name',
         headerAlign: 'left',
         align: 'left'
       }, {
         label: 'Last Name',
         field: 'last_name',
+        headerAlign: 'left',
+        align: 'left'
+      }, {
+        label: 'Addresses',
+        field: 'addresses_count',
+        headerAlign: 'left',
+        align: 'left'
+      }, {
+        label: 'Cars',
+        field: 'cars_count',
         headerAlign: 'left',
         align: 'left'
       }, {
@@ -55580,8 +55621,8 @@ var routes = [{
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /mnt/c/Users/Dave/PhpstormProjects/laravel-code-exercise/resources/js/app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! /mnt/c/Users/Dave/PhpstormProjects/laravel-code-exercise/resources/sass/app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\Users\Axel\Documents\Unified Compliance\vue excercise\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\Users\Axel\Documents\Unified Compliance\vue excercise\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

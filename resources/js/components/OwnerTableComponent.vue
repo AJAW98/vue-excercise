@@ -18,7 +18,7 @@ export default {
                     align: 'center'
                 },
                 {
-                    label: 'First Name',
+                    label: 'First aName',
                     field: 'first_name',
                     headerAlign: 'left',
                     align: 'left'
@@ -26,6 +26,21 @@ export default {
                 {
                     label: 'Last Name',
                     field: 'last_name',
+                    headerAlign: 'left',
+                    align: 'left'
+                },
+                //Adds addresses count column
+                {
+                    label: 'Addresses',
+                    field: 'addresses_count',
+                    headerAlign: 'left',
+                    align: 'left'
+                },
+
+                //Adds cars count column
+                {
+                    label: 'Cars',
+                    field: 'cars_count',
                     headerAlign: 'left',
                     align: 'left'
                 },
