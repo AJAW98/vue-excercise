@@ -1,8 +1,8 @@
 <template>
     <div>
-        <button class="btn btn-primary" @click="view()">View</button>
-        <button class="btn btn-primary">Edit</button>
-        <button class="btn btn-danger" @click="confirmDelete(row.id, row.type)">Delete</button>
+        <button class="btn btn-primary" @click="clicked('view')">View</button>
+        <button class="btn btn-primary" @click="clicked('edit')">Edit</button>
+        <button class="btn btn-danger" @click="clicked('delete')">Delete</button>
     </div>
 </template>
 
@@ -23,12 +23,10 @@ export default {
     methods: {
 
 
-
-        view() {
-
-            this.$emit('rowView', this.row)
-
+        clicked(type) {
+            this.$emit(type)
         },
+
         confirmDelete(id, type) {
 
             console.log(type);

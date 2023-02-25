@@ -13,13 +13,20 @@ import VueRouter from 'vue-router';
 import VueAxios from 'vue-axios';
 import axios from 'axios';
 import {routes} from './routes';
+import { BootstrapVue } from 'bootstrap-vue';
 
 Vue.use(VueRouter);
 Vue.use(VueAxios, axios);
 
+// Import Bootstrap and BootstrapVue CSS files (order is important)
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
+
 import 'vuejs-datatable/dist/themes/bootstrap-4.esm';
-import {VuejsDatatableFactory} from 'vuejs-datatable';
-Vue.use(VuejsDatatableFactory);
+//import {VuejsDatatableFactory} from 'vuejs-datatable';
+//Vue.use(VuejsDatatableFactory);
+
+Vue.use(BootstrapVue)
 
 /**
  * The following block of code may be used to automatically register your
