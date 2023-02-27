@@ -1,6 +1,6 @@
 <template>
     <div>
-        <b-button @click="back()">Go Back</b-button>
+        
         <div v-if="edit">
             
             <b-form @submit="submit">
@@ -40,6 +40,7 @@
             </b-form>
         </div>
         <div v-if="!edit">
+            <b-button @click="back()">Go Back</b-button>
             <p>Address: {{ address.address }}</p>
             <p>Owner Name: {{ owner }}</p>
             

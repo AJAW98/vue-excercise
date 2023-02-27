@@ -1,6 +1,5 @@
 <template>
     <div>
-        <b-button @click="back()">Go Back</b-button>
         <div v-if="edit">
             
             <b-form @submit="submit">
@@ -24,6 +23,7 @@
             </b-form>
         </div>
         <div v-if="!edit">
+            <b-button @click="back()">Go Back</b-button>
             <p>First Name: {{ owner.first_name }}</p>
             <p>Last Name: {{ owner.last_name }}</p>
             
@@ -85,11 +85,9 @@ export default {
         submit() {
             this.$emit('save', this.owner)
         },
-
         back() {
             this.$emit('back')
         },
-
     },
     created: function () {
         this.showAddresses()

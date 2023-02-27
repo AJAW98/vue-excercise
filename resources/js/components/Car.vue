@@ -1,6 +1,6 @@
 <template>
     <div>
-        <b-button @click="back()">Go Back</b-button>
+        
         <div v-if="edit">
             
             <b-form @submit="submit">
@@ -48,6 +48,7 @@
             </b-form>
         </div>
         <div v-if="!edit">
+            <b-button @click="back()">Go Back</b-button>
             <p>Make: {{ car.make }}</p>
             <p>Model: {{ car.model }}</p>
             <p>Year: {{ car.model }}</p>
