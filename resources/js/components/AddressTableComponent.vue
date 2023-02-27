@@ -1,70 +1,126 @@
 <template>
     <div>
-        <bootstrap-4-datatable :columns="columns" :data="rows" :filter="filter" :per-page="perPage" class="table-bordered"></bootstrap-4-datatable>
-        <bootstrap-4-datatable-pager v-model="page" type="abbreviated"></bootstrap-4-datatable-pager>
+
+
+        <div v-if="tableView">
+
+            <b-table id="addresses-table" striped :items="items" :fields="fields" :currentPage="page" :perPage="perPage" :filter="filter">
+                
+                <template #cell(actions)="data">
+                    <TableButtonsComponent @edit="editRow(data.item)" @delete="confirmDelete(data.item)" @view="viewRow(data.item)"/>
+                </template>
+
+                <template #cell(owner)="data">
+                    {{ data.item.owner.first_name }} {{data.item.owner.last_name}}
+                </template>
+
+                <template #cell(address)="data">
+                    {{ data.item.address }} <br> {{ data.item.city }} <br> {{ data.item.country }} <br> {{ data.item.postal_code }}
+                </template>
+            
+            </b-table>
+
+            <b-pagination
+                v-model="page"
+                :total-rows="rows"
+                :per-page="perPage"
+                aria-controls="addresses-table"
+            ></b-pagination>
+            
+
+        </div>
+        <Address v-if="!tableView" @back="viewTable()" @save="saveAddress" :address="selected" :edit="edit"/>
+
+
     </div>
+    
 </template>
 
 <script>
 import TableButtonsComponent from "./TableButtonsComponent";
+import Address from './Address.vue';
+import Swal from 'sweetalert2'
 
 export default {
     data() {
         return {
-            columns: [
-                {
-                    label: 'ID',
-                    field: 'id',
-                    align: 'center'
-                },
-
-                //Adds name column with owner's concatenated name
-                {
-                    label: 'Name',
-                    field: 'owner',
-                    align: 'center',
-                    interpolate: true,
-                    representedAs: function (r) {
-                        return r.owner.first_name + '<br>' + r.owner.last_name;
-                    }
-                    
-                },
-                {
-                    label: 'Cars',
-                    field: 'cars_count',
-                    align: 'center'
-                },
-                {
-                    label: 'Address',
-                    field: 'address',
-                    headerAlign: 'left',
-                    align: 'left',
-                    interpolate: true,
-                    representedAs: function (r) {
-                        return r.address + '<br>' + r.city + '<br>' + r.country + '<br>' + r.postal_code;
-                    }
-                },
-                {
-                    label: 'Actions',
-                    headerAlign: 'right',
-                    align: 'right',
-                    component: TableButtonsComponent
-                }
+            fields: [
+                { key: 'id', label: "ID"},
+                { key: 'owner', label: "Name"},
+                { key: 'cars_count', label: "Cars"},
+                { key: 'address', label: "Address"},
+                { key: 'actions', label: "Actions"}
             ],
-            rows: [],
+            items: [],
             page: 1,
             filter:  '',
             perPage: 20,
-            loading: true
+            loading: true,
+            tableView: true,
+            edit: true,
+            selected: null
         }
+    },
+    computed: {
+      rows() {
+        return this.items.length
+      }
     },
     methods: {
         showAddresses: function () {
             axios.get('/address').then(function (res) {
-                this.rows = res.data.map(o => ({...o, 'type': 'address'}));
+                this.items = res.data.map(o => ({...o, 'type': 'address'}));
+                console.log(this.items)
             }.bind(this));
-        }
+        },
+        viewRow: function(row) {
+            console.log(row)
+            this.edit = false;
+            this.selected = row;
+            this.tableView = false;
+        },
+        editRow: function(row) {
+            this.selected = row;
+            this.edit = true;
+            this.tableView = false;
+        },
+        saveAddress: function(address) {
+            this.viewTable();
+            axios.put(`/address/${address.id}`, address);
+        },
+        confirmDelete: function(address) {
+
+            Swal.fire({
+                title: 'Are you sure you want to delete this address?',
+                showDenyButton: true,
+                confirmButtonText: 'Yes',
+                denyButtonText: 'No',
+                customClass: {
+                    actions: 'my-actions',
+                    confirmButton: 'order-2',
+                    denyButton: 'order-3',
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    axios.delete(`/address/${address.id}`).then(function (res) {
+                        if (res.status === 204) {
+                            this.items = this.items.filter(x => x.id != address.id);
+                            Swal.fire('Address deleted', '', 'success');
+                        }
+                        else Swal.fire('Something went wrong...', '', 'error');
+                    }.bind(this));
+                    
+                }
+            })
+            
+
+        },
+        viewTable: function() {
+            this.selected = null;
+            this.tableView = true;
+        },
     },
+    
     created: function () {
         this.showAddresses()
     }

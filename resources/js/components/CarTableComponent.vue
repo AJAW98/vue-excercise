@@ -27,75 +27,22 @@
             
 
         </div>
-        <car v-if="!tableView" @back="viewTable()" :car="selected" :edit="edit"></car>
+        <car v-if="!tableView" @back="viewTable()" @save="saveCar" :car="selected" :edit="edit"/>
     </div>
 </template>
 
 <script>
 import TableButtonsComponent from "./TableButtonsComponent";
 import Car from './Car.vue';
+import Swal from 'sweetalert2'
+
 
 export default {
 
 
     data() {
         return {
-            // columns: [
-            //     {
-            //         label: 'ID',
-            //         field: 'id',
-            //         align: 'center'
-            //     },
-            //     {
-            //         label: 'Make',
-            //         field: 'make',
-            //         headerAlign: 'left',
-            //         align: 'left'
-            //     },
-            //     {
-            //         label: 'Model',
-            //         field: 'model',
-            //         headerAlign: 'left',
-            //         align: 'left'
-            //     },
-            //     {
-            //         label: 'Year',
-            //         field: 'year',
-            //         headerAlign: 'left',
-            //         align: 'left'
-            //     },
 
-            //     //Adds name column with owner's concatenated name
-            //     {
-            //         label: 'Owner',
-            //         field: 'owner',
-            //         headerAlign: 'left',
-            //         align: 'left',
-            //         interpolate: true,
-            //         representedAs: function (r) {
-            //             return r.owner.first_name + '<br>' + r.owner.last_name;
-            //         }
-            //     },
-
-            //     //Adds address column from the address object in the response
-
-            //     {
-            //         label: 'Address',
-            //         field: 'address',
-            //         headerAlign: 'left',
-            //         align: 'left',
-            //         interpolate: true,
-            //         representedAs: function (r) {
-            //             return r.address.address + '<br>' + r.address.city + '<br>' + r.address.country + '<br>' + r.address.postal_code;
-            //         }
-            //     },
-            //     {
-            //         label: 'Actions',
-            //         headerAlign: 'right',
-            //         align: 'right',
-            //         component: TableButtonsComponent
-            //     }
-            // ],
             fields: [
                 { key: 'id', label: "ID"},
                 { key: 'make', label: "Make"},
@@ -135,16 +82,43 @@ export default {
             this.tableView = false;
 
         },
-         editRow: function(row) {
+        editRow: function(row) {
             this.selected = row;
             this.edit = true;
             this.tableView = false;
 
         },
-         confirmDelete: function(row) {
-            //this.selected = row;
-            //this.tableView = false;
-            alert('delete');
+        saveCar: function(car) {
+            this.viewTable();
+            //THIS SEEMS TO CAUSE: Call to undefined relationship [addresses] on model [App\\Models\\Car].   --- not quite what to do about it
+            axios.put(`/car/${car.id}`, car);
+
+        },
+        confirmDelete: function(car) {
+
+            Swal.fire({
+                title: 'Are you sure you want to delete this car?',
+                showDenyButton: true,
+                confirmButtonText: 'Yes',
+                denyButtonText: 'No',
+                customClass: {
+                    actions: 'my-actions',
+                    confirmButton: 'order-2',
+                    denyButton: 'order-3',
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    axios.delete(`/car/${car.id}`).then(function (res) {
+                        if (res.status === 204) {
+                            this.items = this.items.filter(x => x.id != car.id);
+                            Swal.fire('Car deleted', '', 'success');
+                        }
+                        else Swal.fire('Something went wrong...', '', 'error');
+                    }.bind(this));
+                    
+                }
+            })
+            
 
         },
         viewTable: function() {
