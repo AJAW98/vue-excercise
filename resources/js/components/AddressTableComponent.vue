@@ -1,13 +1,13 @@
 <template>
     <div>
 
-
-        <div v-if="tableView">
+        <Delete v-if="state === 'delete'" title="Confirm delete" subtitle="Are you sure you want to delete the address?" @confirm="confirmDelete" @cancel="viewTable"/>
+        <div v-if="state === 'table'">
 
             <b-table id="addresses-table" striped :items="items" :fields="fields" :currentPage="page" :perPage="perPage" :filter="filter">
                 
                 <template #cell(actions)="data">
-                    <TableButtonsComponent @edit="editRow(data.item)" @delete="confirmDelete(data.item)" @view="viewRow(data.item)"/>
+                    <TableButtonsComponent @edit="editRow(data.item)" @delete="deleteAddress(data.item)" @view="viewRow(data.item)"/>
                 </template>
 
                 <template #cell(owner)="data">
@@ -29,7 +29,7 @@
             
 
         </div>
-        <Address v-if="!tableView" @back="viewTable()" @save="saveAddress" :address="selected" :edit="edit"/>
+        <Address v-if="state === 'view'" @back="viewTable()" @save="saveAddress" :address="selected" :edit="edit"/>
 
 
     </div>
@@ -39,7 +39,9 @@
 <script>
 import TableButtonsComponent from "./TableButtonsComponent";
 import Address from './Address.vue';
-import Swal from 'sweetalert2'
+import Delete from './Delete.vue';
+
+//import Swal from 'sweetalert2'
 
 export default {
     data() {
@@ -56,8 +58,8 @@ export default {
             filter:  '',
             perPage: 20,
             loading: true,
-            tableView: true,
-            edit: true,
+            state: 'table',
+            edit: false,
             selected: null
         }
     },
@@ -77,47 +79,68 @@ export default {
             console.log(row)
             this.edit = false;
             this.selected = row;
-            this.tableView = false;
+            this.state = 'view';
         },
         editRow: function(row) {
             this.selected = row;
             this.edit = true;
-            this.tableView = false;
+            this.state = 'view';
         },
         saveAddress: function(address) {
             this.viewTable();
             axios.put(`/address/${address.id}`, address);
         },
-        confirmDelete: function(address) {
 
-            Swal.fire({
-                title: 'Are you sure you want to delete this address?',
-                showDenyButton: true,
-                confirmButtonText: 'Yes',
-                denyButtonText: 'No',
-                customClass: {
-                    actions: 'my-actions',
-                    confirmButton: 'order-2',
-                    denyButton: 'order-3',
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    axios.delete(`/address/${address.id}`).then(function (res) {
-                        if (res.status === 204) {
-                            this.items = this.items.filter(x => x.id != address.id);
-                            Swal.fire('Address deleted', '', 'success');
-                        }
-                        else Swal.fire('Something went wrong...', '', 'error');
-                    }.bind(this));
-                    
-                }
-            })
+        //Stores address in 'seleted' and updates the state to show the delete confirmation
+        deleteAddress: function(address) {
+            this.selected = address
+            this.state = 'delete'
+        },
+
+        //Is called when confirmed the deletion
+        confirmDelete: function() {
             
+            axios.delete(`/address/${this.selected.id}`).then(function (res) {
+                this.items = this.items.filter(x => x.id != this.selected.id);
+                this.selected = null
+            }.bind(this));
+
+            this.state = 'table'
 
         },
+        
+        
+        
+        // confirmDelete: function(address) {
+
+        //     Swal.fire({
+        //         title: 'Are you sure you want to delete this address?',
+        //         showDenyButton: true,
+        //         confirmButtonText: 'Yes',
+        //         denyButtonText: 'No',
+        //         customClass: {
+        //             actions: 'my-actions',
+        //             confirmButton: 'order-2',
+        //             denyButton: 'order-3',
+        //         }
+        //     }).then((result) => {
+        //         if (result.isConfirmed) {
+        //             axios.delete(`/address/${address.id}`).then(function (res) {
+        //                 if (res.status === 204) {
+        //                     this.items = this.items.filter(x => x.id != address.id);
+        //                     Swal.fire('Address deleted', '', 'success');
+        //                 }
+        //                 else Swal.fire('Something went wrong...', '', 'error');
+        //             }.bind(this));
+                    
+        //         }
+        //     })
+            
+
+        // },
         viewTable: function() {
             this.selected = null;
-            this.tableView = true;
+            this.state = 'table';
         },
     },
     

@@ -1,11 +1,14 @@
 <template>
     <div> 
-        <div v-if="tableView">
+
+        <Delete v-if="state === 'delete'" title="Confirm delete" subtitle="Are you sure you want to delete the car?" @confirm="confirmDelete" @cancel="viewTable"/>
+
+        <div v-if="state === 'table'">
 
             <b-table id="cars-table" striped :items="items" :fields="fields" :currentPage="page" :perPage="perPage" :filter="filter">
                 
                 <template #cell(actions)="data">
-                    <TableButtonsComponent @edit="editRow(data.item)" @delete="confirmDelete(data.item)" @view="viewRow(data.item)"/>
+                    <TableButtonsComponent @edit="editRow(data.item)" @delete="deleteCar(data.item)" @view="viewRow(data.item)"/>
                 </template>
 
                 <template #cell(owner)="data">
@@ -27,14 +30,16 @@
             
 
         </div>
-        <car v-if="!tableView" @back="viewTable()" @save="saveCar" :car="selected" :edit="edit"/>
+        <car v-if="state === 'view'" @back="viewTable()" @save="saveCar" :car="selected" :edit="edit"/>
     </div>
 </template>
 
 <script>
 import TableButtonsComponent from "./TableButtonsComponent";
 import Car from './Car.vue';
-import Swal from 'sweetalert2'
+import Delete from './Delete.vue';
+
+//import Swal from 'sweetalert2'
 
 
 export default {
@@ -57,7 +62,7 @@ export default {
             filter:  '',
             perPage: 20,
             loading: true,
-            tableView: true,
+            state: 'table',
             edit: true,
             selected: null
         }
@@ -76,54 +81,73 @@ export default {
                 this.items = res.data.map(o => ({...o, 'type': 'car'}));
             }.bind(this));
         },
+        //Updates edit flag, stores current row and switches to view state
         viewRow: function(row) {
             this.edit = false;
             this.selected = row;
-            this.tableView = false;
+            this.state = 'view'
 
         },
+        //Updates edit flag, stores current row and switches to view state
         editRow: function(row) {
             this.selected = row;
             this.edit = true;
-            this.tableView = false;
+            this.state = 'view'
 
         },
+        //After clicking save, switches to table view and sends a request to update the car
         saveCar: function(car) {
             this.viewTable();
             //THIS SEEMS TO CAUSE: Call to undefined relationship [addresses] on model [App\\Models\\Car].   --- not quite what to do about it
             axios.put(`/car/${car.id}`, car);
 
         },
-        confirmDelete: function(car) {
 
-            Swal.fire({
-                title: 'Are you sure you want to delete this car?',
-                showDenyButton: true,
-                confirmButtonText: 'Yes',
-                denyButtonText: 'No',
-                customClass: {
-                    actions: 'my-actions',
-                    confirmButton: 'order-2',
-                    denyButton: 'order-3',
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    axios.delete(`/car/${car.id}`).then(function (res) {
-                        if (res.status === 204) {
-                            this.items = this.items.filter(x => x.id != car.id);
-                            Swal.fire('Car deleted', '', 'success');
-                        }
-                        else Swal.fire('Something went wrong...', '', 'error');
-                    }.bind(this));
+        //Stores owner in 'seleted' and updates the state to show the delete confirmation
+        deleteCar: function(car) {
+            this.selected = car
+            this.state = 'delete'
+        },
+        // confirmDelete: function(car) {
+
+        //     Swal.fire({
+        //         title: 'Are you sure you want to delete this car?',
+        //         showDenyButton: true,
+        //         confirmButtonText: 'Yes',
+        //         denyButtonText: 'No',
+        //         customClass: {
+        //             actions: 'my-actions',
+        //             confirmButton: 'order-2',
+        //             denyButton: 'order-3',
+        //         }
+        //     }).then((result) => {
+        //         if (result.isConfirmed) {
+        //             axios.delete(`/car/${car.id}`).then(function (res) {
+        //                 if (res.status === 204) {
+        //                     this.items = this.items.filter(x => x.id != car.id);
+        //                     Swal.fire('Car deleted', '', 'success');
+        //                 }
+        //                 else Swal.fire('Something went wrong...', '', 'error');
+        //             }.bind(this));
                     
-                }
-            })
+        //         }
+        //     })
             
+
+        // },
+        confirmDelete: function() {
+            
+            axios.delete(`/car/${this.selected.id}`).then(function (res) {
+                this.items = this.items.filter(x => x.id != this.selected.id);
+                this.selected = null
+            }.bind(this));
+
+            this.state = 'table'
 
         },
         viewTable: function() {
             this.selected = null;
-            this.tableView = true;
+            this.state = 'table'
         }
     },
     created: function () {
