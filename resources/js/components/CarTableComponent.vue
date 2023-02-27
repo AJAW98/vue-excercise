@@ -76,6 +76,7 @@ export default {
     
     methods: {
         showCars: function () {
+            //TODO: Add checks to make sure the request worked
             axios.get('/car').then(function (res) {
                 console.log(res.data)
                 this.items = res.data.map(o => ({...o, 'type': 'car'}));
@@ -108,6 +109,14 @@ export default {
             this.selected = car
             this.state = 'delete'
         },
+
+
+        /*
+        *
+        *           THIS WAS MY PREVIOUS SOLUTION, I CONVERTED IT TO THE 'DELETE' COMPONENT INSTEAD
+        */
+
+
         // confirmDelete: function(car) {
 
         //     Swal.fire({

@@ -58,7 +58,7 @@ export default {
             filter:  '',
             perPage: 20,
             loading: true,
-            state: 'table',
+            state: 'table', //QUESTION: IS THERE ENUMS IN VUE? 
             edit: false,
             selected: null
         }
@@ -69,18 +69,23 @@ export default {
       }
     },
     methods: {
+
+        //TODO: Add checks to make sure the request worked
         showAddresses: function () {
             axios.get('/address').then(function (res) {
                 this.items = res.data.map(o => ({...o, 'type': 'address'}));
                 console.log(this.items)
             }.bind(this));
         },
+
+        //Stores clicked row in state and updates the view
         viewRow: function(row) {
             console.log(row)
             this.edit = false;
             this.selected = row;
             this.state = 'view';
         },
+        //Stores clicked row in state and updates the view
         editRow: function(row) {
             this.selected = row;
             this.edit = true;
@@ -89,6 +94,7 @@ export default {
         saveAddress: function(address) {
             this.viewTable();
             axios.put(`/address/${address.id}`, address);
+            //TODO: Add checks to make sure the request worked
         },
 
         //Stores address in 'seleted' and updates the state to show the delete confirmation
@@ -100,6 +106,7 @@ export default {
         //Is called when confirmed the deletion
         confirmDelete: function() {
             
+            //TODO: Add checks to make sure the request worked
             axios.delete(`/address/${this.selected.id}`).then(function (res) {
                 this.items = this.items.filter(x => x.id != this.selected.id);
                 this.selected = null
@@ -110,7 +117,10 @@ export default {
         },
         
         
-        
+         /*
+        *
+        *           THIS WAS MY PREVIOUS SOLUTION, I CONVERTED IT TO THE 'DELETE' COMPONENT INSTEAD
+        */
         // confirmDelete: function(address) {
 
         //     Swal.fire({
@@ -138,6 +148,9 @@ export default {
             
 
         // },
+
+
+
         viewTable: function() {
             this.selected = null;
             this.state = 'table';

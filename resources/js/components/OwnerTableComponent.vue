@@ -79,6 +79,7 @@ export default {
     },
     methods: {
         showOwners: function () {
+            //TODO: Add checks to make sure the request worked
             axios.get('/owner').then(function (res) {
                 this.items = res.data.map(o => ({...o, 'type': 'owner'}));
             }.bind(this));
@@ -112,6 +113,7 @@ export default {
 
         confirmDelete: function() {
             
+            //TODO: Add checks to make sure the request worked
             axios.delete(`/owner/${this.selected.id}`).then(function (res) {
                 this.items = this.items.filter(x => x.id != this.selected.id);
                 this.selected = null
@@ -120,6 +122,10 @@ export default {
             this.state = 'table'
 
         },
+         /*
+        *
+        *           THIS WAS MY PREVIOUS SOLUTION, I CONVERTED IT TO THE 'DELETE' COMPONENT INSTEAD
+        */
         // confirmDelete: function(owner) {
 
         //     Swal.fire({
